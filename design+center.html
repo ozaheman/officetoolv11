@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Urban Axis - Design Center</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+    body, html {
+        height: 100%;
+        overflow: hidden;
+    }
+    #design-view {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        padding: 0;
+    }
+    #design-view .app-header {
+        flex-shrink: 0;
+    }
+    .design-content-wrapper {
+        flex-grow: 1;
+        padding: 15px 20px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .design-view-content {
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+	/* MODIFICATION START: Styles for the new 
+	Leave Panel */
+	 .leave-content-wrapper {
+	  height: 100px;
+      flex-grow: 1;
+        padding: 15px 20px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+  }
+	.leave-panel{
+	 width: 340px;
+  height: 100px;
+  padding: 15px 20px;
+        display: flex;
+  flex-direction: column;
+	}
+	.leave-list-container{
+	 width: 340px;
+  height: 100px;
+  flex-direction: column;
+	}
+	 .rfi-preview-container {
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 5px;
+}
+.rfi-preview-container h4 { margin: 0 0 5px 0; }
+.rfi-preview-container p { font-size: 0.9em; margin: 0 0 10px 0; }
+.rfi-preview-container ul { font-size: 0.85em; }
+
+.dropdown { position: relative; display: inline-block; }
+.dropdown-content { display: none; position: absolute; background-color: #f9f9f9; min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; border-radius: 5px; overflow: hidden; }
+.dropdown-content a { color: black; padding: 12px 16px; text-decoration: none; display: block; font-size: 0.85em; }
+.dropdown-content a:hover { background-color: #f1f1f1; }
+.dropdown:hover .dropdown-content { display: block; }
+	 
+    .dashboard-layout {
+        display: flex;
+        gap: 20px;
+        flex-grow: 1;
+        overflow: hidden;
+    }
+    .main-dashboard-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .leave-panel {
+        width: 280px;
+        flex-shrink: 0;
+        background-color: #f8f9fa;
+        border-left: 1px solid #dee2e6;
+        padding: 15px;
+        overflow-y: auto;
+    }
+    .leave-panel h3 {
+        margin-top: 0;
+        font-size: 1.1em;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+    }
+    .leave-item {
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .leave-item:last-child {
+        border-bottom: none;
+    }
+    .leave-item-name {
+        font-weight: bold;
+        color: #333;
+    }
+    .leave-item-dates {
+        font-size: 0.85em;
+        color: #666;
+    }
+    .leave-item-status {
+        font-size: 0.8em;
+        font-weight: bold;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+        margin-left: 8px;
+    }
+    .leave-item-status.on-leave { background-color: #dc3545; }
+    .leave-item-status.upcoming { background-color: #ffc107; color: #333; }
+    /* --- Scrum Board Styles --- */
+    #scrum-board-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; padding-top: 15px; height: 100%; }
+    .scrum-column { background-color: #f4f5f7; border-radius: 8px; display: flex; flex-direction: column; }
+    .scrum-column-header { padding: 10px 15px; font-weight: bold; border-bottom: 2px solid #e0e2e5; }
+    .scrum-column-content { padding: 10px; flex-grow: 1; overflow-y: auto; }
+    .scrum-card { background-color: #fff; border-radius: 5px; padding: 10px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: pointer; transition: box-shadow 0.2s, opacity 0.2s; box-sizing: border-box; }
+    .scrum-card.filtered-out { display: none; }
+    .scrum-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;}
+    .scrum-card-tag { font-size: 0.7em; font-weight: bold; color: white; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; }
+    .scrum-card-project-id { font-size: 0.75em; color: #888; font-weight: bold; }
+    .scrum-card-title { font-size: 0.9rem; margin-bottom: 10px; }
+    .scrum-card-footer { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #666; }
+    .scrum-card-done { background-color: #f5f5f5 !important; border-left-color: #bdbdbd !important; opacity: 0.8; }
+    .scrum-card-done .scrum-card-title { text-decoration: line-through; color: #757575; }
+    .scrum-card-tag[style*="background-color: #ffe119"] { color: #333; }
+    .view-controls { padding-bottom: 15px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+    .placeholder-text { text-align: center; padding-top: 50px; color: #888; }
+
+    /* --- Summary & Progress --- */
+    #design-scrum-progress-container h4 { margin: 0 0 8px 0; font-size: 1em; color: #333; }
+    .scrum-progress-bar { display: flex; width: 100%; height: 20px; border-radius: 5px; overflow: hidden; background-color: #e9ecef; border: 1px solid #ddd; }
+    .scrum-progress-segment { height: 100%; }
+    .design-summary-container { display: flex; gap: 15px; padding: 10px 0; margin-bottom: 15px; border-bottom: 1px solid #ddd; }
+    .summary-box { flex: 1; background-color: #f9f9f9; border-radius: 8px; padding: 15px; text-align: center; border: 1px solid #eee; cursor: pointer; }
+    .summary-box .value { font-size: 2em; font-weight: 600; display: block; }
+    .summary-box .label { font-size: 0.9em; color: #555; }
+    .summary-box.running .value { color: #007bff; }
+    .summary-box.due .value { color: #ffc107; }
+    .summary-box.overdue .value { color: #dc3545; }
+    .summary-box.planned .value { color: #6c757d; }
+    /* New Style for On Leave Box */
+    .summary-box.on-leave .value { color: #6f42c1; }
+    
+    /* --- Agenda & Assignee Views --- */
+    .agenda-item, .assignee-task-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-radius: 4px; margin-bottom: 5px; background-color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.08); cursor: pointer; }
+    .agenda-item-main, .assignee-task-item .info { flex-grow: 1; }
+    .agenda-project-id, .assignee-task-item .project-id { font-size: 0.8em; color: #888; margin-left: 10px; background: #eee; padding: 2px 5px; border-radius: 3px; }
+	
+    .agenda-item-details, .assignee-task-item .due-date { font-size: 0.85em; color: #555; flex-shrink: 0; min-width: 90px; text-align: right;}
+    .agenda-due-date.overdue, .assignee-task-item .due-date.overdue { color: #dc3545; font-weight: bold; }
+    
+    /* --- Calendar View Styles --- */
+    #design-calendar-container { display: flex; flex-direction: column; height: 100%; }
+    #design-calendar-container .calendar-header { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #ddd; flex-shrink: 0; }
+    #cal-grid-wrapper { overflow: auto; flex-grow: 1; }
+    #design-calendar-container .calendar-grid-header, #design-calendar-container .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+    #design-calendar-container .calendar-grid-header { position: sticky; top: 0; z-index: 10; background-color: #f4f5f7; }
+    #design-calendar-container .calendar-grid { border-left: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; grid-auto-rows: minmax(120px, auto); }
+    #design-calendar-container .calendar-grid-header div { text-align: center; font-weight: bold; padding: 8px 0; border-top: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; }
+    
+    #design-calendar-container .calendar-day { display: flex; flex-direction: column; background-color: #fff; min-height: 120px; padding: 4px; position: relative; border-top: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; }
+    .calendar-day.other-month { background-color: #f9f9f9; }
+    .calendar-day.is-holiday { background-color: #e6f7ff; }
+    .calendar-day.is-weekend { background-color: #fafafa; }
+    .day-header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .day-leaves { display: flex; flex-wrap: wrap; gap: 3px; }
+    .leave-indicator { width: 18px; height: 18px; border-radius: 50%; font-size: 10px; font-weight: bold; line-height: 18px; text-align: center; color: white; cursor: help; border: 1px solid rgba(0,0,0,0.2); }
+    .day-number { font-size: 0.8em; font-weight: bold; color: #333; }
+    .day-events { flex-grow: 1; margin-top: 4px; display: flex; flex-direction: column; gap: 3px; }
+    
+    /* MODIFICATION START: Word Wrap for Task Bars */
+    .event-bar { 
+        display: flex; 
+        align-items: flex-start; /* Align to top for multi-line text */
+        gap: 4px; 
+        font-size: 0.75em; 
+        padding: 3px 5px; 
+        border-radius: 3px; 
+        color: white; 
+        overflow: visible; /* Allow content to be visible */
+        cursor: pointer; 
+        min-height: 18px;
+    }
+    .event-bar-label { 
+        flex-grow: 1; 
+        white-space: normal; /* Allow wrapping */
+        word-break: break-word; /* Break long words */
+        line-height: 1.3;
+    }
+    .event-bar-jobno { font-weight: bold; flex-shrink: 0; line-height: 1.3; }
+    .event-bar-status { font-size: 0.9em; flex-shrink: 0; line-height: 1.3; }
+    /* MODIFICATION END */
+    
+    .event-bar.in-progress {
+        background-image: linear-gradient( 45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent );
+        background-size: 30px 30px;
+        animation: progress-animation 2s linear infinite;
+    }
+    @keyframes progress-animation { 0% { background-position: 30px 0; } 100% { background-position: 0 0; } }
+
+</style>
+</head>
+<body>
+
+<div id="design-view">
+    <header class="app-header">
+        <h1>Design Center</h1>
+        <div class="dashboard-header-controls">
+		
+		<form action="index.html"><input type="submit" value="← Back to Dashboard" /></form>
+           
+        </div>
+    </header>
+    
+    <div class="design-content-wrapper">
+        <div class="design-summary-container" id="design-summary-panel">
+            <div class="summary-box running" data-view-target="agenda"><span class="value" id="summary-running">0</span><span class="label">Running Tasks</span></div>
+            <div class="summary-box due" data-view-target="agenda"><span class="value" id="summary-due-today">0</span><span class="label">Due Today</span></div>
+            <div class="summary-box overdue" data-view-target="agenda"><span class="value" id="summary-overdue">0</span><span class="label">Overdue Tasks</span></div>
+            <div class="summary-box planned" data-view-target="agenda"><span class="value" id="summary-planned">0</span><span class="label">Planned Tasks</span></div>
+            <div class="summary-box on-leave"><span class="value" id="summary-on-leave">0</span><span class="label">Staff on Leave</span></div>
+        </div>
+		
+        <div class="view-controls">
+            <div class="input-group">
+                <label for="design-project-selector">Select Project</label>
+                <select id="design-project-selector"><option>-- Select a Project --</option></select>
+                <button id="add-default-tasks-btn" class="secondary-button" style="display: none;" title="Add all tasks from the standard template to this project's board.">Add Default Tasks</button>
+                <button id="add-custom-task-btn" class="primary-button" style="display: none;">+ Add Custom Task</button>
+                <button id="equalize-tasks-btn" class="secondary-button" style="display: none;" title="Automatically schedule tasks sequentially for each assignee.">Equalize Tasks</button>
+            </div>
+            <div class="tabs">
+                <button class="tab-button active" data-view="board">Scrum Board</button>
+                <button class="tab-button" data-view="agenda">Upcoming Tasks</button>
+                <button class="tab-button" data-view="calendar">Monthly Calendar</button>
+                <button class="tab-button" data-view="assignee">By Assignee</button>
+            </div>
+            <div class="input-group" id="department-filter-group" style="display: flex;"><label for="department-filter">Department</label><select id="department-filter"></select></div>
+            <div class="input-group" id="staff-filter-group" style="display: flex;"><label for="staff-filter">Assignee</label><select id="staff-filter"></select></div>
+        </div>
+        <div id="design-scrum-progress-container" style="display: none; padding: 15px 0 0 0;"></div>
+        
+        <div id="scrum-board-container" class="design-view-content" style="display: none;"></div>
+        <div id="design-agenda-container" class="design-view-content" style="display:none;"></div>
+        <div id="design-calendar-container" class="design-view-content" style="display:none;"></div>
+        <div id="design-assignee-container" class="design-view-content" style="display:none;"></div>
+    </div>
+</div>
+
+<!-- Modals -->
+<div id="add-task-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content"><span id="add-task-modal-close-btn" class="modal-close-btn">×</span><h2 id="add-task-modal-title">Add New Task</h2><div class="modal-body"><div class="input-group"><label for="add-task-name">Task Name</label><input type="text" id="add-task-name"></div><div class="input-group"><label for="add-task-planned-duration">Planned Duration (Days)</label><input type="number" id="add-task-planned-duration" min="1" value="1"></div><div class="input-group"><label for="add-task-department">Department</label><select id="add-task-department"></select></div><div class="input-group"><label for="add-task-assignee">Assignee</label><select id="add-task-assignee"></select></div><div class="input-group"><label for="add-task-duedate">Due Date</label><input type="date" id="add-task-duedate"></div><div class="input-group"><label><input type="checkbox" id="add-task-to-similar"> Add to all similar project types</label></div></div><div class="modal-footer"><button id="save-new-task-btn" class="primary-button">Save Task</button></div></div>
+</div>
+<div id="task-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <span id="task-modal-close-btn" class="modal-close-btn">×</span>
+        <h2 id="task-modal-title">Edit Task</h2>
+        <div class="modal-body">
+            <input type="hidden" id="task-modal-id"><input type="hidden" id="task-modal-jobno">
+            <div class="input-group"><label for="task-modal-department">Department</label><select id="task-modal-department"></select></div>
+            <div class="input-group"><label for="task-modal-assignee">Assignee</label><select id="task-modal-assignee"></select></div>
+            <div class="input-group"><label for="task-modal-planned-duration">Planned Duration (Days)</label><input type="number" id="task-modal-planned-duration" min="1" value="1"></div>
+            <div class="input-group"><label for="task-modal-duedate">Due Date</label><input type="date" id="task-modal-duedate"></div>
+            <div class="input-group"><label for="task-modal-status">Status</label><select id="task-modal-status"><option>Up Next</option><option>To Do</option><option>In Progress</option><option>Done</option></select></div>
+            <div id="task-modal-rfi-preview" class="rfi-preview-container" style="display:none;"></div>
+        </div>
+        <div class="modal-footer">
+            <button id="delete-task-btn" class="danger-button" style="margin-right: auto;">Delete Task</button>
+            <div id="task-modal-rfi-actions" style="display:none;">
+                <button class="secondary-button small-button btn-approved" data-status="Approved">Approve</button>
+                <button class="secondary-button small-button btn-approved-noted" data-status="Approved as Noted">Approve as Noted</button>
+                <button class="secondary-button small-button btn-revise" data-status="Revise & Resubmit">Revise & Resubmit</button>
+                <button class="secondary-button small-button btn-rejected" data-status="Rejected">Reject</button>
+            </div>
+            <button id="save-task-btn" class="primary-button">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<!-- JS Libraries & Modules -->
+<script src="js/constants.js"></script>
+<script src="js/database.js"></script>
+<script src="js/scrum_board.js"></script>
+<script src="js/design_calendar.js"></script>
+
+<!-- Application Logic -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // A self-contained App object for this page
+    const App = { DOMElements: {} };
+    
+    const Bulletin = {
+        log: async (title, body) => {
+            console.log(`[BULLETIN] ${title}: ${body.replace(/<[^>]*>?/gm, '')}`);
+            if (typeof DB !== 'undefined' && DB.addBulletinItem) {
+                await DB.addBulletinItem({ title, body, timestamp: new Date() });
+            }
+        }
+    };
+
+    async function main() {
+        try {
+            await DB.init();
+            cacheDOMElements();
+            setupEventListeners();
+            await initDesignCenter();
+        } catch (error) {
+            console.error("Fatal Error initializing Design Center:", error);
+            document.body.innerHTML = `<div class='placeholder-text' style='color:red;'><h2>Application Failed to Start</h2><p>Could not initialize the database. Please try clearing your browser's cache and site data for this page and try again.</p><p><i>Error: ${error.message}</i></p></div>`;
+        }
+    }
+    const verifyAccess = async (jobNo, role, password) => {
+        try {
+            const project = await DB.getProject(jobNo);
+			
+            if (project && project.accessCredentials && project.accessCredentials[role]) {
+                const creds = project.accessCredentials[role];
+                if (creds.pass === password) return true;
+            }
+            return await DB.verifyPassword(role, password);
+        } catch (e) {
+            console.error("Error during access verification:", e);
+            return false;
+        }
+    };
+    function generateScrumProgressBarHtml(scrumData) {
+        if (!scrumData || !scrumData.tasks || scrumData.tasks.length === 0) return '';
+        const totalTasks = scrumData.tasks.length;
+        const completedTasksByDept = scrumData.tasks.reduce((acc, task) => {
+            if (task.status === 'Done') {
+                const dept = task.department || 'Default';
+                if (!acc[dept]) acc[dept] = 0;
+                acc[dept]++;
+            }
+            return acc;
+        }, {});
+        let segmentsHtml = '';
+        let totalDone = 0;
+        const departments = Object.keys(completedTasksByDept).sort(); 
+        for (const dept of departments) {
+            const doneCount = completedTasksByDept[dept];
+            totalDone += doneCount;
+            const percentage = (doneCount / totalTasks) * 100;
+            const color = DEPARTMENT_COLORS[dept] || DEPARTMENT_COLORS['Default'];
+            segmentsHtml += `<div class="scrum-progress-segment" style="width: ${percentage}%; background-color: ${color};" title="${dept}: ${doneCount} tasks"></div>`;
+        }
+        const overallProgress = totalTasks > 0 ? (totalDone / totalTasks) * 100 : 0;
+        const overallTitle = `Overall Scrum Progress: ${totalDone}/${totalTasks} tasks completed (${overallProgress.toFixed(1)}%).`;
+        return `<div class="scrum-progress-bar" title="${overallTitle}">${segmentsHtml}</div>`;
+    }
+
+    async function initDesignCenter() {
+        await renderDesignSummary();
+        await refreshDesignStudioSelector();
+        const boardButton = App.DOMElements['design-view'].querySelector('[data-view="board"]');
+        if (boardButton) handleDesignViewSwitch({ target: boardButton });
+    }
+    
+    async function refreshDesignStudioSelector() {
+        const projects = await DB.getAllProjects();
+        const designProjects = projects.filter(p => !(p.scopeOfWorkTypes?.['Modification'] || p.scopeOfWorkTypes?.['AOR Service']));
+        const selector = App.DOMElements['design-project-selector'];
+        if (!selector) return;
+        const currentValue = selector.value;
+        selector.innerHTML = '<option value="">-- All Projects (Cumulative View) --</option>';
+        designProjects.sort((a, b) => b.jobNo.localeCompare(a.jobNo)).forEach(p => {
+            const isSelected = p.jobNo === currentValue ? ' selected' : '';
+            selector.innerHTML += `<option value="${p.jobNo}"${isSelected}>${p.jobNo} - ${p.projectDescription || p.clientName}</option>`;
+        });
+    }
+
+    async function renderDesignSummary() {
+        const allScrumData = await DB.getAllScrumData();
+        // FIX: Correctly call DB.getAll with the store name 'staffLeaves'
+        const allStaffLeaves = await DB.getAll('staffLeaves'); 
+        if (!allScrumData) return;
+        
+        let running = 0, dueToday = 0, overdue = 0, planned = 0, onLeave = 0;
+        const today = new Date(); 
+        today.setHours(0, 0, 0, 0);
+
+        // Calculate task stats
+        allScrumData.forEach(project => {
+            (project.tasks || []).forEach(task => {
+                if (task.status === 'Done') return;
+                if (task.status === 'Up Next' || task.status === 'To Do') planned++;
+                const dueDate = task.dueDate ? new Date(task.dueDate) : null;
+                if (dueDate && dueDate < today) overdue++;
+                else if (dueDate && dueDate.getTime() === today.getTime()) dueToday++;
+                else if (task.status === 'In Progress') running++;
+            });
+        });
+
+        // Calculate staff on leave today
+        if (allStaffLeaves) {
+            allStaffLeaves.forEach(leave => {
+                const startDate = new Date(leave.startDate + 'T00:00:00');
+                const endDate = new Date(leave.endDate + 'T00:00:00');
+                if (today >= startDate && today <= endDate) {
+                    onLeave++;
+                }
+            });
+        }
+
+        App.DOMElements['summary-running'].textContent = running;
+        App.DOMElements['summary-due-today'].textContent = dueToday;
+        App.DOMElements['summary-overdue'].textContent = overdue;
+        App.DOMElements['summary-planned'].textContent = planned;
+        App.DOMElements['summary-on-leave'].textContent = onLeave;
+    }
+
+    async function handleDesignViewSwitch(event) {
+        const isProjectSelection = event.target.id === 'design-project-selector';
+        let button;
+
+        if (isProjectSelection) {
+            button = document.querySelector('.tabs .tab-button[data-view="board"]');
+        } else {
+            button = event.target.closest('.tab-button');
+        }
+        if (!button) return;
+        const view = button.dataset.view;
+
+        document.querySelectorAll('#design-view .tabs .tab-button').forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        document.querySelectorAll('.design-view-content').forEach(el => el.style.display = 'none');
+
+        const jobNo = App.DOMElements['design-project-selector'].value || null;
+        const isBoardView = view === 'board';
+        
+        const controls = {
+            deptFilter: App.DOMElements['department-filter-group'], staffFilter: App.DOMElements['staff-filter-group'],
+            addCustomTaskBtn: App.DOMElements['add-custom-task-btn'], addDefaultTasksBtn: App.DOMElements['add-default-tasks-btn'],
+            equalizeTasksBtn: App.DOMElements['equalize-tasks-btn'], progressContainer: App.DOMElements['design-scrum-progress-container']
+        };
+        Object.values(controls).forEach(c => c.style.display = 'none');
+        App.DOMElements['design-project-selector'].style.display = isBoardView ? 'block' : 'none';
+
+        if (isBoardView) {
+            controls.deptFilter.style.display = 'flex';
+            controls.staffFilter.style.display = 'flex';
+            if (jobNo) {
+                ['addCustomTaskBtn', 'addDefaultTasksBtn', 'equalizeTasksBtn'].forEach(key => controls[key].style.display = 'inline-block');
+            }
+        }
+        
+        const { staff, scrumData } = await DB.getScrumBoardData(jobNo);
+
+        if (jobNo && scrumData && scrumData.tasks) {
+            scrumData.tasks.forEach(task => {
+                if (!task.jobNo) {
+                    task.jobNo = jobNo;
+                }
+            });
+        }
+
+        if (view === 'board') {
+            App.DOMElements['scrum-board-container'].style.display = 'grid';
+            if (jobNo && scrumData) {
+                controls.progressContainer.innerHTML = `<h4>Project Scrum Progress</h4>${generateScrumProgressBarHtml(scrumData)}`;
+                controls.progressContainer.style.display = 'block';
+            }
+            if (scrumData && scrumData.tasks.length > 0) {
+                ScrumBoard.render(scrumData, staff, handleTaskStatusUpdate, showTaskModal, DEPARTMENT_COLORS);
+                populateDepartmentFilter(scrumData.tasks);
+                populateStaffFilter(scrumData.tasks, staff);
+                applyScrumBoardFilters();
+            } else {
+                const message = jobNo ? 'No scrum board found for this project. Add tasks to create one.' : 'No active tasks found across all projects.';
+                App.DOMElements['scrum-board-container'].innerHTML = `<p class="placeholder-text">${message}</p>`;
+            }
+        } else if (view === 'assignee') {
+            App.DOMElements['design-assignee-container'].style.display = 'block';
+            ScrumBoard.renderByAssignee(scrumData.tasks, staff, showTaskModal);
+        } else { 
+            const allProjects = await DB.getAllProjects();
+            if (view === 'calendar') {
+                App.DOMElements['design-calendar-container'].style.display = 'flex';
+                DesignCalendar.render(scrumData.tasks, staff, allProjects);
+            } else if (view === 'agenda') {
+                App.DOMElements['design-agenda-container'].style.display = 'block';
+                DesignCalendar.renderAgenda(scrumData.tasks, staff, allProjects);
+            }
+        }
+    }
+    
+    function populateDepartmentFilter(tasks) {
+        const filterSelect = App.DOMElements['department-filter'];
+        filterSelect.innerHTML = '<option value="">All Departments</option>';
+        const departments = [...new Set(tasks.map(t => t.department || 'Default'))];
+        departments.sort().forEach(dept => {
+            filterSelect.innerHTML += `<option value="${dept}">${dept}</option>`;
+        });
+    }
+
+    function populateStaffFilter(tasks, allStaff) {
+        const filterSelect = App.DOMElements['staff-filter'];
+        filterSelect.innerHTML = '<option value="">All Assignees</option>';
+        const staffMap = new Map(allStaff.map(s => [s.id, s.name]));
+        const assignedIds = [...new Set(tasks.map(t => t.assigneeId).filter(id => id != null))];
+        assignedIds.sort((a,b) => (staffMap.get(a) || '').localeCompare(staffMap.get(b) || '')).forEach(id => {
+            if (staffMap.has(id)) {
+                filterSelect.innerHTML += `<option value="${id}">${staffMap.get(id)}</option>`;
+            }
+        });
+        if (tasks.some(t => !t.assigneeId)) {
+            filterSelect.innerHTML += `<option value="unassigned">Unassigned</option>`;
+        }
+    }
+
+    function applyScrumBoardFilters() {
+        const selectedDept = App.DOMElements['department-filter'].value;
+        const selectedStaffId = App.DOMElements['staff-filter'].value;
+        const cards = document.querySelectorAll('#scrum-board-container .scrum-card');
+        cards.forEach(card => {
+            const cardDept = card.dataset.department;
+            const cardAssigneeId = card.dataset.assigneeId;
+            const deptMatch = !selectedDept || cardDept === selectedDept;
+            const staffMatch = !selectedStaffId || cardAssigneeId === selectedStaffId;
+            card.classList.toggle('filtered-out', !(deptMatch && staffMatch));
+        });
+    }
+    
+    window.showTaskModal = async function(taskId, jobNo) {
+        if (!jobNo) {
+            console.error("showTaskModal called without a jobNo.");
+            return;
+        }
+        const scrumData = await DB.getScrumData(jobNo);
+        const task = scrumData.tasks.find(t => t.id == taskId);
+        if (!task) return;
+        App.DOMElements['task-modal-id'].value = taskId;
+        App.DOMElements['task-modal-jobno'].value = jobNo;
+        App.DOMElements['task-modal-title'].textContent = `Edit Task: ${task.name}`;
+        const staffList = await DB.getAllHRData();
+        const assigneeSelect = App.DOMElements['task-modal-assignee'];
+        assigneeSelect.innerHTML = '<option value="">Unassigned</option>';
+        staffList.forEach(s => assigneeSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`);
+        const departmentSelect = App.DOMElements['task-modal-department'];
+        departmentSelect.innerHTML = '';
+        for (const dept in DEPARTMENT_COLORS) departmentSelect.innerHTML += `<option value="${dept}">${dept}</option>`;
+        assigneeSelect.value = task.assigneeId || '';
+        departmentSelect.value = task.department || 'Default';
+        App.DOMElements['task-modal-planned-duration'].value = task.plannedDuration || task.duration || 1;
+        App.DOMElements['task-modal-duedate'].value = task.dueDate || '';
+        App.DOMElements['task-modal-status'].value = task.status || 'To Do';
+		
+		const rfiPreviewEl = App.DOMElements['task-modal-rfi-preview'];
+        const rfiActionsEl = App.DOMElements['task-modal-rfi-actions'];
+        rfiPreviewEl.style.display = 'none';
+        rfiActionsEl.style.display = 'none';
+
+        if (task.relatedRfiId) {
+            const siteData = await DB.getSiteData(jobNo);
+            const rfi = siteData.rfiLog?.find(r => r.id === task.relatedRfiId);
+            if (rfi) {
+                let attachmentsHtml = 'No attachments.';
+                if (rfi.attachments && rfi.attachments.length > 0) {
+                    const fileLinks = await Promise.all(rfi.attachments.map(async (att) => {
+                        const file = await DB.getFileById(att.id);
+                        return file ? `<li><a href="${file.dataUrl}" target="_blank" download="${file.name}">${file.name}</a></li>` : `<li>${att.name} (file missing)</li>`;
+                    }));
+                    attachmentsHtml = `<ul>${fileLinks.join('')}</ul>`;
+                }
+
+                rfiPreviewEl.innerHTML = `
+                    <h4>RFI Details (${rfi.refNo})</h4>
+                    <p><strong>Question:</strong> ${rfi.description}</p>
+                    <p><strong>Attachments:</strong></p>
+                    ${attachmentsHtml}
+                `;
+                rfiPreviewEl.style.display = 'block';
+                rfiActionsEl.style.display = 'flex';
+            }
+        }
+		
+        App.DOMElements['task-modal'].style.display = 'flex';
+    }
+    async function handleRfiActionFromScrum(e) {
+        if (!e.target.dataset.status) return;
+        
+        const status = e.target.dataset.status;
+        const jobNo = App.DOMElements['task-modal-jobno'].value;
+        const taskId = parseInt(App.DOMElements['task-modal-id'].value);
+        
+        const scrumData = await DB.getScrumData(jobNo);
+        const task = scrumData.tasks.find(t => t.id === taskId);
+        if (!task || !task.relatedRfiId) return;
+
+        const role = task.department;
+        const password = prompt(`Enter password for ${role} to confirm action:`);
+        if (!password) return;
+
+        const roleMap = {'Architectural':'arch', 'Structural':'str', 'MEP':'mep', 'Site':'site'};
+        const approvalRole = roleMap[role] || role.toLowerCase();
+        
+		 const isAuthenticated = await verifyAccess(jobNo, approvalRole, password); 
+        if (!isAuthenticated) return alert("Invalid Password");
+
+        const comment = prompt("Add a comment for the RFI Log (optional):");
+
+        const siteData = await DB.getSiteData(jobNo);
+        const rfi = siteData.rfiLog.find(r => r.id === task.relatedRfiId);
+
+        if (rfi) {
+            if (!rfi.approvals) rfi.approvals = {};
+            rfi.approvals[approvalRole] = { user: role, date: new Date().toISOString(), status: status, comment: comment || '' };
+             
+            const displayRoleMap = { arch: 'Arch', str: 'STR', mep: 'MEP', site: 'Site Eng' };
+            rfi.response = Object.entries(rfi.approvals).map(([key, val]) => `${displayRoleMap[key] || key} (${val.status}): ${val.comment || 'No comment.'}`).join('<br>');
+            
+            const required = rfi.requiredApprovals || [];
+            const approvedCount = required.filter(displayRole => {
+                const logicalRole = Object.keys(displayRoleMap).find(key => displayRoleMap[key] === displayRole);
+                return rfi.approvals[logicalRole]?.status.startsWith('Approved');
+            }).length;
+            if (approvedCount === required.length) rfi.status = 'Approved';
+            else if (status === 'Rejected') rfi.status = 'Rejected';
+            else rfi.status = 'Response Pending';
+
+            await DB.putSiteData(siteData);
+
+            task.status = 'Done';
+            await DB.putScrumData(scrumData);
+
+            alert(`RFI status updated to '${status}' and task marked as Done.`);
+            App.DOMElements['task-modal'].style.display = 'none';
+            const activeTab = App.DOMElements['design-view'].querySelector('.tabs .active');
+            handleDesignViewSwitch({ target: activeTab });
+        }
+    }
+    async function handleTaskSave() {
+        const taskId = parseInt(App.DOMElements['task-modal-id'].value);
+        const jobNo = App.DOMElements['task-modal-jobno'].value;
+        const assigneeId = parseInt(App.DOMElements['task-modal-assignee'].value) || null;
+        const dueDateStr = App.DOMElements['task-modal-duedate'].value;
+
+        if (assigneeId && dueDateStr) {
+            const staffList = await DB.getAllHRData();
+            const assignee = staffList.find(s => s.id === assigneeId);
+            const taskDueDate = new Date(dueDateStr + 'T00:00:00');
+
+            if (assignee && assignee.leaves) {
+                for (const leave of assignee.leaves) {
+                    const leaveStart = new Date(leave.startDate + 'T00:00:00');
+                    const leaveEnd = new Date(leave.endDate + 'T00:00:00');
+                    if (taskDueDate >= leaveStart && taskDueDate <= leaveEnd) {
+                        if (!confirm(`${assignee.name} is on leave during this period (${leave.startDate} to ${leave.endDate}).\n\nAre you sure you want to assign this task?`)) {
+                            return;
+                        }
+                        break; 
+                    }
+                }
+            }
+        }
+        
+        const scrumData = await DB.getScrumData(jobNo);
+        const task = scrumData.tasks.find(t => t.id === taskId);
+        if (!task) return;
+
+        const templateTask = DESIGN_SCRUM_TEMPLATE.find(t => t.id === task.id);
+        const minDuration = templateTask ? templateTask.fixed_time : 1;
+        let plannedDuration = parseInt(App.DOMElements['task-modal-planned-duration'].value) || 1;
+        if (plannedDuration < minDuration) {
+            alert(`Duration cannot be less than the fixed minimum of ${minDuration} days for this task.`);
+            plannedDuration = minDuration;
+            App.DOMElements['task-modal-planned-duration'].value = plannedDuration;
+        }
+        if (task.status !== App.DOMElements['task-modal-status'].value) Bulletin.log('Scrum Task Update', `Task "<strong>${task.name}</strong>" for <strong>${jobNo}</strong> moved to <strong>${App.DOMElements['task-modal-status'].value}</strong>.`);
+        if (task.assigneeId !== assigneeId) {
+            const staffList = await DB.getAllHRData();
+            const newAssigneeName = staffList.find(s => s.id === assigneeId)?.name || 'Unassigned';
+            Bulletin.log('Task Reassigned', `Task "<strong>${task.name}</strong>" for <strong>${jobNo}</strong> assigned to <strong>${newAssigneeName}</strong>.`);
+        }
+        task.assigneeId = assigneeId;
+        task.department = App.DOMElements['task-modal-department'].value;
+        task.plannedDuration = plannedDuration;
+        task.dueDate = dueDateStr;
+        task.status = App.DOMElements['task-modal-status'].value;
+        await DB.putScrumData(scrumData);
+        App.DOMElements['task-modal'].style.display = 'none';
+        const activeTab = App.DOMElements['design-view'].querySelector('.tabs .active');
+        handleDesignViewSwitch({ target: activeTab });
+    }
+    
+    async function handleDeleteTask() {
+        const taskId = parseInt(App.DOMElements['task-modal-id'].value);
+        const jobNo = App.DOMElements['task-modal-jobno'].value;
+        const password = prompt("To delete this task, please enter the admin password:");
+        if (password !== 'delete123') { if (password !== null) alert("Incorrect password."); return; }
+        const scrumData = await DB.getScrumData(jobNo);
+        const taskToDelete = scrumData.tasks.find(t => t.id === taskId);
+        if (!taskToDelete) return;
+        scrumData.tasks = scrumData.tasks.filter(t => t.id !== taskId);
+        await DB.putScrumData(scrumData);
+        Bulletin.log('Task Deleted', `Task "<strong>${taskToDelete.name}</strong>" was deleted from project <strong>${jobNo}</strong>.`);
+        App.DOMElements['task-modal'].style.display = 'none';
+        const activeTab = App.DOMElements['design-view'].querySelector('.tabs .active');
+        handleDesignViewSwitch({ target: activeTab });
+    }
+    
+    async function handleTaskStatusUpdate(taskId, newStatus, jobNo) {
+        if (!jobNo) return;
+        const scrumData = await DB.getScrumData(jobNo);
+        if (!scrumData) return;
+        const task = scrumData.tasks.find(t => t.id == taskId);
+        if (task && task.status !== newStatus) {
+            const oldStatus = task.status;
+            task.status = newStatus;
+            const today = new Date().toISOString().split('T')[0];
+            if (newStatus === 'In Progress' && !task.startDate) task.startDate = today;
+            if (newStatus === 'Done') task.completedDate = today;
+            if (oldStatus === 'Done' && newStatus !== 'Done') task.completedDate = null;
+            await DB.putScrumData(scrumData);
+            Bulletin.log('Scrum Task Update', `Task "<strong>${task.name}</strong>" for <strong>${jobNo}</strong> moved to <strong>${newStatus}</strong>.`);
+        }
+    }
+    
+    async function showAddTaskModal() {
+        App.DOMElements['add-task-name'].value = '';
+        App.DOMElements['add-task-planned-duration'].value = 1;
+        App.DOMElements['add-task-duedate'].value = '';
+        App.DOMElements['add-task-to-similar'].checked = false;
+        const staffList = await DB.getAllHRData();
+        const assigneeSelect = App.DOMElements['add-task-assignee'];
+        assigneeSelect.innerHTML = '<option value="">Unassigned</option>';
+        staffList.forEach(s => assigneeSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`);
+        const departmentSelect = App.DOMElements['add-task-department'];
+        departmentSelect.innerHTML = '';
+        for (const dept in DEPARTMENT_COLORS) departmentSelect.innerHTML += `<option value="${dept}">${dept}</option>`;
+        App.DOMElements['add-task-modal'].style.display = 'flex';
+    }
+    
+    async function handleAddTaskSave() {
+        const jobNo = App.DOMElements['design-project-selector'].value;
+        if (!jobNo) return;
+        const taskName = App.DOMElements['add-task-name'].value;
+        if (!taskName) { alert('Task Name is required.'); return; }
+        const currentProject = await DB.getProject(jobNo);
+        let scrumData = await DB.getScrumData(jobNo);
+        if (!scrumData) scrumData = { jobNo, tasks: [] };
+        const maxId = scrumData.tasks.reduce((max, task) => Math.max(max, task.id), 999);
+        const newTask = { id: maxId + 1, name: taskName, status: 'Up Next', department: App.DOMElements['add-task-department'].value, assigneeId: parseInt(App.DOMElements['add-task-assignee'].value) || null, dueDate: App.DOMElements['add-task-duedate'].value || null, plannedDuration: parseInt(App.DOMElements['add-task-planned-duration'].value) || 1, startDate: null, completedDate: null, dateAdded: new Date().toISOString().split('T')[0] };
+        scrumData.tasks.push(newTask);
+        await DB.putScrumData(scrumData);
+        if (App.DOMElements['add-task-to-similar'].checked) {
+            const allProjects = await DB.getAllProjects();
+            const similarProjects = allProjects.filter(p => p.projectType === currentProject.projectType && p.jobNo !== jobNo);
+            for (const project of similarProjects) {
+                let otherScrumData = await DB.getScrumData(project.jobNo) || { jobNo: project.jobNo, tasks: [] };
+                const maxOtherId = otherScrumData.tasks.reduce((max, task) => Math.max(max, task.id), 999);
+                otherScrumData.tasks.push({ ...newTask, id: maxOtherId + 1 });
+                await DB.putScrumData(otherScrumData);
+            }
+            Bulletin.log('Bulk Task Add', `Custom task "<strong>${newTask.name}</strong>" added to <strong>${similarProjects.length + 1}</strong> projects of type <strong>${currentProject.projectType}</strong>.`);
+        }
+        App.DOMElements['add-task-modal'].style.display = 'none';
+        const activeTab = App.DOMElements['design-view'].querySelector('.tabs .active');
+        handleDesignViewSwitch({ target: activeTab });
+    }
+
+    async function handleEqualizeTasks() {
+        if (!confirm("This will automatically reschedule all 'Up Next', 'To Do', and 'In Progress' tasks sequentially for each assignee, skipping weekends and public holidays. Are you sure?")) return;
+        const jobNo = App.DOMElements['design-project-selector'].value;
+        const scrumData = await DB.getScrumData(jobNo);
+        if (!scrumData) return;
+        const holidays = await DB.getHolidays('AE', new Date().getFullYear());
+        const holidaySet = new Set(holidays.map(h => h.date));
+        const tasksByAssignee = scrumData.tasks.reduce((acc, task) => {
+            if (task.status !== 'Done') {
+                const assigneeId = task.assigneeId || 'unassigned';
+                if (!acc[assigneeId]) acc[assigneeId] = [];
+                acc[assigneeId].push(task);
+            }
+            return acc;
+        }, {});
+        const addWorkDays = (date, days) => { let d = new Date(date); let added = 0; while (added < days) { d.setDate(d.getDate() + 1); const dayOfWeek = d.getDay(); const dateStr = d.toISOString().split('T')[0]; if (dayOfWeek !== 0 && dayOfWeek !== 6 && !holidaySet.has(dateStr)) { added++; } } return d; };
+        let tasksUpdatedCount = 0;
+        for (const assigneeId in tasksByAssignee) {
+            const tasks = tasksByAssignee[assigneeId];
+            const taskMap = new Map(tasks.map(t => [t.id, t]));
+            const sortedTasks = [];
+            const visited = new Set();
+            function visit(task) { if (!task || visited.has(task.id)) return; visited.add(task.id);(task.dependencies || []).forEach(depId => { const depTask = taskMap.get(depId); if (depTask) visit(depTask); }); sortedTasks.push(task); }
+            tasks.forEach(visit);
+            let lastDueDate = new Date();
+            sortedTasks.forEach(task => { const duration = task.plannedDuration || 1; const newDueDate = addWorkDays(lastDueDate, duration); task.dueDate = newDueDate.toISOString().split('T')[0]; lastDueDate = newDueDate; tasksUpdatedCount++; });
+        }
+        await DB.putScrumData(scrumData);
+        alert(`${tasksUpdatedCount} tasks have been rescheduled.`);
+        Bulletin.log('Tasks Equalized', `Tasks for project <strong>${jobNo}</strong> have been rescheduled.`);
+        const activeTab = App.DOMElements['design-view'].querySelector('.tabs .active');
+        handleDesignViewSwitch({ target: activeTab });
+    }
+
+    function setupEventListeners() {
+        document.addEventListener('designViewChange', e => handleDesignViewSwitch(e.detail));
+        
+        App.DOMElements['design-view']?.querySelector('.tabs')?.addEventListener('click', handleDesignViewSwitch);
+        App.DOMElements['design-project-selector']?.addEventListener('change', handleDesignViewSwitch);
+        App.DOMElements['department-filter']?.addEventListener('change', applyScrumBoardFilters);
+        App.DOMElements['staff-filter']?.addEventListener('change', applyScrumBoardFilters);
+        App.DOMElements['add-custom-task-btn']?.addEventListener('click', showAddTaskModal);
+		 App.DOMElements['task-modal-rfi-actions']?.addEventListener('click', handleRfiActionFromScrum);
+        App.DOMElements['add-task-modal-close-btn']?.addEventListener('click', () => App.DOMElements['add-task-modal'].style.display = 'none');
+        App.DOMElements['save-new-task-btn']?.addEventListener('click', handleAddTaskSave);
+        App.DOMElements['task-modal-close-btn']?.addEventListener('click', () => App.DOMElements['task-modal'].style.display = 'none');
+        App.DOMElements['save-task-btn']?.addEventListener('click', handleTaskSave);
+        App.DOMElements['delete-task-btn']?.addEventListener('click', handleDeleteTask);
+        App.DOMElements['equalize-tasks-btn']?.addEventListener('click', handleEqualizeTasks);
+        App.DOMElements['design-summary-panel']?.addEventListener('click', (e) => {
+            const summaryBox = e.target.closest('.summary-box');
+            if (!summaryBox) return;
+            const targetButton = App.DOMElements['design-view'].querySelector(`.tabs .tab-button[data-view="${summaryBox.dataset.viewTarget}"]`);
+            if (targetButton) targetButton.click();
+        });
+    }
+
+    function cacheDOMElements() {
+        const ids = [
+            'design-view', 'design-project-selector', 'scrum-board-container', 'design-calendar-container', 
+            'design-agenda-container', 'design-assignee-container', 'department-filter-group', 'department-filter', 
+            'staff-filter-group', 'staff-filter', 'design-scrum-progress-container', 'add-default-tasks-btn', 
+            'add-custom-task-btn', 'equalize-tasks-btn', 'add-task-modal', 'add-task-modal-close-btn', 
+            'add-task-modal-title', 'add-task-name', 'add-task-planned-duration', 'add-task-department', 
+            'add-task-assignee', 'add-task-duedate', 'add-task-to-similar', 'save-new-task-btn', 
+            'design-summary-panel', 'summary-running', 'summary-due-today', 'summary-overdue', 'summary-planned',
+            'task-modal', 'task-modal-close-btn', 'task-modal-title', 'task-modal-id', 'task-modal-jobno', 
+            'task-modal-assignee', 'task-modal-planned-duration', 'task-modal-duedate', 'task-modal-status', 
+            'save-task-btn', 'delete-task-btn', 'task-modal-department',
+            'task-modal-rfi-preview', 'task-modal-rfi-actions',
+            // NEW: Add the new summary box ID to the cache
+            'summary-on-leave'
+        ];
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) App.DOMElements[id] = el;
+        });
+    }
+
+    main();
+});
+</script>
+
+</body>
+</html>
